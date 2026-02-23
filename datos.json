@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "titulo": "LA 8080-14-2018 - TAPIADO",
+    "estado": "Abierta",
+    "prioridad": "Crítica",
+    "responsable": "KIKE",
+    "fechaApertura": "2026-02-24",
+    "fechaCierre": "",
+    "descripcion": "MIERES - PZ DEL ABETO 2, 4º A / TAPIADO EL MARTES 24 / URGENTE"
+  },
+  {
+    "id": 2,
+    "titulo": "LB_8050_0001_1738 - TAPIADO",
+    "estado": "Resuelta",
+    "prioridad": "Crítica",
+    "responsable": "KIKE",
+    "fechaApertura": "2026-02-23",
+    "fechaCierre": "2026-02-23",
+    "descripcion": "OVIEDO - CL XUACUL DE SAMA 1, BAJO A / TAPIADO EL LUNES 23 / URGENTE / FIN"
+  },
+  {
+    "id": 3,
+    "titulo": "LA-109-26-1743 - TAPIADO",
+    "estado": "Abierta",
+    "prioridad": "Crítica",
+    "responsable": "KIKE",
+    "fechaApertura": "2026-02-23",
+    "fechaCierre": "",
+    "descripcion": "LANGREO - CL SAMUÑO 10, BAJO IZDA / tapiar con madera ventanas y puertas y poner bombín nuevo / URGENTE"
+  }
+]
