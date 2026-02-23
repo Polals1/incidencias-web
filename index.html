@@ -6,14 +6,29 @@
 
     <style>
         body { font-family: Arial, sans-serif; background:#f5f5f5; padding:20px; }
-        .container { background:white; padding:20px; border-radius:8px; max-width:1100px; margin:auto; }
+        .container { background:white; padding:20px; border-radius:8px; max-width:1400px; margin:auto; }
         table { width:100%; border-collapse:collapse; font-size:.9rem; margin-top:20px; }
         th, td { border:1px solid #ccc; padding:8px; }
         th { background:#007bff; color:white; }
-        .badge { padding:3px 6px; border-radius:4px; color:white; }
-        .estado-abierta { background:#dc3545; }
-        .estado-enprogreso { background:#ffc107; color:black; }
-        .estado-resuelta { background:#28a745; }
+
+        /* ESTADOS DINÁMICOS */
+        .estado {
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        /* Colores automáticos según texto */
+        .estado-URGENTE { background:#d9534f; }
+        .estado-FINALIZADO { background:#28a745; }
+        .estado-FACTURABLE { background:#0275d8; }
+        .estado-"INCIDENCIA CLIENTE" { background:#f0ad4e; color:black; }
+        .estado-VACIO { background:#6c757d; }
+
+        /* Estado por defecto */
+        .estado-default { background:#999; }
     </style>
 </head>
 <body>
@@ -24,14 +39,17 @@
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Título</th>
+            <th>Código</th>
+            <th>Proveedor</th>
+            <th>Municipio</th>
+            <th>Dirección</th>
+            <th>Contacto</th>
+            <th>Teléfono</th>
+            <th>Trabajo</th>
+            <th>Observación Serveo</th>
+            <th>Urgencia</th>
+            <th>Observación Proveedor</th>
             <th>Estado</th>
-            <th>Prioridad</th>
-            <th>Responsable</th>
-            <th>Fecha apertura</th>
-            <th>Fecha cierre</th>
-            <th>Descripción</th>
         </tr>
         </thead>
         <tbody id="tablaIncidencias"></tbody>
@@ -49,17 +67,27 @@ function renderTabla(incidencias) {
     tbody.innerHTML = "";
 
     incidencias.forEach(i => {
+        let estado = i.estado || "VACIO";
+
+        // normalizar para clase CSS
+        let claseEstado = "estado-" + estado.replace(/ /g, "_").replace(/"/g,"");
+
         let tr = document.createElement("tr");
+
         tr.innerHTML = `
-            <td>${i.id}</td>
-            <td>${i.titulo}</td>
-            <td><span class="badge estado-${i.estado.toLowerCase().replace(" ","")}">${i.estado}</span></td>
-            <td>${i.prioridad}</td>
-            <td>${i.responsable}</td>
-            <td>${i.fechaApertura || "-"}</td>
-            <td>${i.fechaCierre || "-"}</td>
-            <td>${i.descripcion}</td>
+            <td>${i.codigo}</td>
+            <td>${i.proveedor}</td>
+            <td>${i.municipio}</td>
+            <td>${i.direccion}</td>
+            <td>${i.contacto}</td>
+            <td>${i.telefono}</td>
+            <td>${i.trabajo}</td>
+            <td>${i.obs_serveo || ""}</td>
+            <td>${i.urgencia || ""}</td>
+            <td>${i.obs_proveedor || ""}</td>
+            <td><span class="estado ${claseEstado}">${estado}</span></td>
         `;
+
         tbody.appendChild(tr);
     });
 }
