@@ -1,72 +1,133 @@
-[
-  {
-    "codigo": "LA 8080-14-2018",
-    "proveedor": "KIKE",
-    "municipio": "MIERES",
-    "direcciones": [
-      "PZ DEL ABETO 2, 4º A"
-    ],
-    "contactos": [
-      "TAPIADO"
-    ],
-    "telefonos": [],
-    "trabajos": [
-      "TAPIADO"
-    ],
-    "obs_serveo": [
-      "TAPIADO EL MARTES 24"
-    ],
-    "urgencias": [
-      "URGENTE"
-    ],
-    "obs_proveedor": [],
-    "estados": []
-  },
-  {
-    "codigo": "LB_8050_0001_1738",
-    "proveedor": "KIKE",
-    "municipio": "OVIEDO",
-    "direcciones": [
-      "CL XUACU EL DE SAMA 1, BAJO A"
-    ],
-    "contactos": [
-      "TAPIADO"
-    ],
-    "telefonos": [],
-    "trabajos": [
-      "TAPIADO"
-    ],
-    "obs_serveo": [
-      "TAPIADO EL LUNES 23"
-    ],
-    "urgencias": [
-      "URGENTE"
-    ],
-    "obs_proveedor": [],
-    "estados": [
-      "FINALIZADO"
-    ]
-  },
-  {
-    "codigo": "LA-1 09-26-1743",
-    "proveedor": "KIKE",
-    "municipio": "LANGREO",
-    "direcciones": [
-      "CL SAMUÑO 10, BAJO IZDA"
-    ],
-    "contactos": [
-      "TAPIADO"
-    ],
-    "telefonos": [],
-    "trabajos": [
-      "TAPIADO",
-      "tapiar con madera ventanas y puertas y poner bombin nuevo"
-    ],
-    "obs_serveo": [],
-    "urgencias": [
-      "URGENTE"
-    ],
-    "obs_proveedor": [],
-    "estados": []
-  }
-]
+  <script>
+
+const STORAGE_KEY = "incidenciasSeguimiento_v1";
+let incidencias = [];
+
+window.addEventListener("load", () => {
+
+    // Si no hay incidencias guardadas, cargamos las de la foto
+    if (!localStorage.getItem(STORAGE_KEY)) {
+        incidencias = [
+            {
+                id: Date.now() - 300000,
+                titulo: "LA 8080-14-2018 - TAPIADO",
+                responsable: "KIKE",
+                prioridad: "Crítica",
+                estado: "Abierta",
+                fechaApertura: "2026-02-24",
+                fechaCierre: "",
+                descripcion: "MIERES - PZ DEL ABETO 2, 4º A / TAPIADO EL MARTES 24 / URGENTE"
+            },
+            {
+                id: Date.now() - 200000,
+                titulo: "LB_8050_0001_1738 - TAPIADO",
+                responsable: "KIKE",
+                prioridad: "Crítica",
+                estado: "Resuelta",
+                fechaApertura: "2026-02-23",
+                fechaCierre: "2026-02-23",
+                descripcion: "OVIEDO - CL XUACUL DE SAMA 1, BAJO A / TAPIADO EL LUNES 23 / URGENTE / FIN"
+            },
+            {
+                id: Date.now() - 100000,
+                titulo: "LA-109-26-1743 - TAPIADO",
+                responsable: "KIKE",
+                prioridad: "Crítica",
+                estado: "Abierta",
+                fechaApertura: "2026-02-23",
+                fechaCierre: "",
+                descripcion: "LANGREO - CL SAMUÑO 10, BAJO IZDA / tapiar con madera ventanas y puertas y poner bombín nuevo / URGENTE"
+            }
+        ];
+
+        guardar();
+
+    } else {
+        incidencias = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    }
+
+    renderTabla();
+});
+
+document.getElementById("formIncidencia").addEventListener("submit", e => {
+    e.preventDefault();
+
+    let nueva = {
+        id: Date.now(),
+        titulo: titulo.value.trim(),
+        responsable: responsable.value.trim(),
+        prioridad: prioridad.value,
+        estado: estado.value,
+        fechaApertura: fechaApertura.value,
+        fechaCierre: fechaCierre.value,
+        descripcion: descripcion.value.trim()
+    };
+
+    if (!nueva.titulo) return alert("El título es obligatorio.");
+
+    incidencias.push(nueva);
+    guardar();
+    renderTabla();
+    e.target.reset();
+});
+
+document.getElementById("btnBorrarTodo").addEventListener("click", () => {
+    if (confirm("¿Borrar todas las incidencias?")) {
+        incidencias = [];
+        guardar();
+        renderTabla();
+    }
+});
+
+function actualizarEstado(id, estadoNuevo) {
+    incidencias = incidencias.map(i => {
+        if (i.id === id) {
+            i.estado = estadoNuevo;
+            if (estadoNuevo === "Resuelta" && !i.fechaCierre) {
+                i.fechaCierre = new Date().toISOString().slice(0, 10);
+            }
+        }
+        return i;
+    });
+    guardar();
+    renderTabla();
+}
+
+function borrar(id) {
+    if (!confirm("¿Eliminar incidencia?")) return;
+    incidencias = incidencias.filter(i => i.id !== id);
+    guardar();
+    renderTabla();
+}
+
+function guardar() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(incidencias));
+}
+
+function renderTabla() {
+    let tbody = document.getElementById("tablaIncidencias");
+    tbody.innerHTML = "";
+
+    incidencias.forEach(i => {
+        let tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${i.id}</td>
+            <td>${i.titulo}</td>
+            <td><span class="badge estado-${i.estado.replace(" ", "").toLowerCase()}">${i.estado}</span></td>
+            <td>${i.prioridad}</td>
+            <td>${i.responsable}</td>
+            <td>${i.fechaApertura || "-"}</td>
+            <td>${i.fechaCierre || "-"}</td>
+            <td>${i.descripcion}</td>
+            <td>
+                <button onclick="actualizarEstado(${i.id}, 'En progreso')">En progreso</button>
+                <button onclick="actualizarEstado(${i.id}, 'Resuelta')">Resuelta</button>
+                <button onclick="borrar(${i.id})">Eliminar</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+</script>
